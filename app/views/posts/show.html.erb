@@ -1,1 +1,58 @@
+<h1><%= @post.title %></h1>
+
+<h2>Post:</h2>
+<p><%= @post.content %></p>
+ 
+ <h2>Categories:</h2>
+<ul>
+    <% @post.categories.each do |category| %>
+        <li><%= link_to category.name, category_path(category) %></li>
+    <% end%>
+</ul>
+
+
+
+
+<% if @post.comments%>
+
+    <h2>Comments:</h2>
+    <ul>
+    <% @post.comments.each do |comment| %>
+    <li>
+        <%= comment.user.username %> says: <%= comment.content %> 
+    </li>
+    <% end %>
+    </ul>
+
+    <h2>Commenters:</h2>
+    <% @post.comments_users.each do |user| %>
+        <%= link_to user.username, user_path(user) %>
+    <% end %>
+
+<% end %>
+
+
+<!-- Form for comment -->
+<%= form_for @post.comments.build do |c| %>
+    <%= c.label :content, "Add a new Comment:" %>
+    <%= c.text_area :content %>
+    <br>
+    <%= c.hidden_field :post_id, value: @post.id %>
+    
+    <!-- Dropdown for user -->
+
+    <%= c.collection_select(:user_id, User.all, :id, :username, prompt: true)  %>
+    
+    <!-- fields for new user -->
+    <%= c.fields_for :user, User.new do |u| %>
+        <%= u.label :username, "New Username:" %>
+        <%= u.text_field :username %>
+    <% end %>
+
+    <!-- Submit Button -->
+    <%= c.submit %>
+
+<% end %>
+
+
 
